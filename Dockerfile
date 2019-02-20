@@ -44,7 +44,10 @@ RUN echo y | sdkmanager "emulator" \
                         "system-images;android-${EMULATOR_VERSION};default;armeabi-v7a"
 
 COPY android-wait-for-emulator.sh /scripts/android-wait-for-emulator.sh
+RUN ["chmod", "+x", "/scripts/android-wait-for-emulator.sh"]
 COPY prepareAndroidEmulator.sh /scripts/prepareAndroidEmulator.sh
+RUN ["chmod", "+x", "/scripts/prepareAndroidEmulator.sh"]
+
 ENV PATH "$PATH:/scripts"
 
 # create AVD image
