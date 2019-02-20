@@ -29,3 +29,24 @@ RUN echo y | sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}" \
                         "build-tools;${ANDROID_BUILD_TOOLS}" \
                         "extras;google;m2repository" \
                         "extras;android;m2repository"
+
+
+# emulator - remove if no emulator is needed
+#Unable to install with newer emulator versions. Don`t know why.
+ENV EMULATOR_VERSION "22"
+
+RUN echo y | sdkmanager "platform-tools"
+ENV PATH "$PATH:${ANDROID_HOME}/platform-tools"
+
+# install packages for emulator
+# use arm image (for x86 images, haxm is necessary which needs the container started in privilidged mode)
+RUN echo y | sdkmanager "emulator" \
+                        "system-images;android-${EMULATOR_VERSION};default;armeabi-v7a"
+
+COPY android-wait-for-emulator.sh /scripts/android-wait-for-emulator.sh
+COPY prepareAndroidEmulator.sh /scripts/prepareAndroidEmulator.sh
+ENV PATH "$PATH:/scripts"
+
+# create AVD image
+RUN echo no | avdmanager create avd -n test -k "system-images;android-${EMULATOR_VERSION};default;armeabi-v7a"
+# emulator END
